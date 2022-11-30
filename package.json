@@ -1,0 +1,89 @@
+{
+  "name": "peacock-labels",
+  "displayName": "Peacock Labels",
+  "description": "See Peacock label values in your code without spinning up the TV app.",
+  "version": "0.0.3",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "peacockLabels.labelLookup",
+        "title": "Peacock Label Lookup"
+      },
+      {
+        "command": "peacockLabels.reverseLabelLookup",
+        "title": "Peacock Reverse Label Lookup"
+      }
+    ],
+    "configuration": {
+      "properties": {
+        "peacockLabels.environment": {
+          "type": "string",
+          "enum": ["production", "stable-int"],
+          "default": "production",
+          "description": "See labels based on the environment you're in (e.g. stable-int or production)"
+        },
+        "peacockLabels.provider": {
+          "type": "string",
+          "enum": ["Peacock", "SkyShowtime", "Manhatten"],
+          "default": "Peacock",
+          "description": "See labels based on the provider (e.g SkyShowtime or Peacock)"
+        },
+        "peacockLabels.device": {
+          "type": "string",
+          "enum": ["TV", "IPSETTOPBOX"],
+          "default": "TV",
+          "description": "What type of DEVICE are you developing on? (e.g. TV, IPSETTOPBOX)"
+        },
+        "peacockLabels.platform": {
+          "type": "string",
+          "enum": ["ANDROIDTV", "FIRETV", "VIZIO", "XFINITY-X1", "LG", "SAMSUNG"],
+          "default": "ANDROIDTV",
+          "description": "What type of PLATFORM are you developing on? (e.g. FIRETV, LG)"
+        },
+        "peacockLabels.territory": {
+          "type": "string",
+          "enum": ["US", "NL", "PL", "DK", "FI", "NO", "PT", "ES", "SE"],
+          "default": "US",
+          "description": "What TERRITORY are you developing in? (e.g. US, NL)"
+        },
+        "peacockLabels.language": {
+          "type": "string",
+          "enum": ["en", "nl", "pl", "da", "fi", "nb", "pt", "es", "sv"],
+          "default": "en",
+          "description": "What Language are you developing in? (e.g. es, nl)"
+        }
+      }
+    }
+  },
+
+  
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "yarn run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.73.0",
+    "@vscode/test-electron": "^2.2.0",
+    "eslint": "^8.26.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "axios": "^1.2.0"
+  }
+}
