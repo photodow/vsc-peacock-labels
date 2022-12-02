@@ -56,6 +56,12 @@ async function activate(context) {
     )
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand("peacockLabels.refreshLabels", () => {
+      labelManager.loadLabels();
+    })
+  );
+
   // vscode.languages.registerInlayHintsProvider(selector, {
   //   provideInlayHints(doc, range, cancelToken) {
   //     console.log(range.end);
