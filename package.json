@@ -4,6 +4,7 @@
   "description": "See Peacock label values in your code without spinning up the TV app.",
   "version": "1.0.0",
   "icon": "src/images/peacock-logo.png",
+  "repository": "https://github.com/photodow/vsc-peacock-labels",
   "engines": {
     "vscode": "^1.73.0"
   },
