@@ -1,7 +1,16 @@
 const labelKeyRegExp = {
-  fullkey: /[-\w]+(\.[-\w]+)+(?=[,'"`])/, // aaa.aaa.aaa
-  partialkey: /[-\w]+(\.[-\w]*)*(?=[,'"`])/, // aaa.aaa.
+  fullkey: new RegExp(
+    labelKeyGen("+", ",", "^") + "|" + labelKeyGen("+", "'\"`"),
+    "gm"
+  ), // aaa.aaa.aaa
+  partialkey: new RegExp(
+    labelKeyGen("*", ",", "^") + "|" + labelKeyGen("*", "'\"`"),
+    "gm"
+  ), // aaa.aaa.
 };
+function labelKeyGen(quant = "", end = "", start = "") {
+  return `${start}[\\w]+(\\.[\\w]${quant})${quant}(?=['${end}])`;
+}
 
 function getLabelAtPosition(doc, position) {
   const range = doc.getWordRangeAtPosition(position, labelKeyRegExp.fullkey);

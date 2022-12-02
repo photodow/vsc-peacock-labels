@@ -15,7 +15,7 @@ class LabelManager {
     const waitToRefresh = 1000 * 60 * 60 * 12;
     if (
       labelState.init &&
-      new Date().valueOf() - waitToRefresh < labelState.lastUpdate.valueOf()
+      new Date().valueOf() - waitToRefresh > labelState.lastUpdate.valueOf()
     ) {
       this.loadLabels();
     }
