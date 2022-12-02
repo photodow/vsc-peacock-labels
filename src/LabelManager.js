@@ -2,6 +2,7 @@ const vscode = require("vscode");
 const { default: axios } = require("axios");
 
 const labelState = {
+  lastUpdate: new Date(),
   init: false,
   labels: {},
   labelsReversed: {}, // value as the key
@@ -10,6 +11,16 @@ const labelState = {
 };
 
 class LabelManager {
+  constructor() {
+    const waitToRefresh = 1000 * 60 * 60 * 12;
+    if (
+      labelState.init &&
+      new Date().valueOf() - waitToRefresh < labelState.lastUpdate.valueOf()
+    ) {
+      this.loadLabels();
+    }
+  }
+
   async init() {
     if (!labelState.init) {
       await this.loadLabels();
@@ -58,6 +69,7 @@ class LabelManager {
 
   setLabelState({ data }) {
     if (data) {
+      labelState.lastUpdate = new Date();
       labelState.labels = data;
       labelState.labelKeys = Object.keys(data).sort();
       labelState.labelsReversed = this.reverseKeyValue(

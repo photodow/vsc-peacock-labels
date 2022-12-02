@@ -2,7 +2,6 @@ const vscode = require("vscode");
 const { LabelManager } = require("../LabelManager");
 
 async function lookupQuickPick(labels) {
-  // copy, insert, reveal
   let key = await vscode.window.showQuickPick(Object.keys(labels));
 
   if (labels[key]) {
