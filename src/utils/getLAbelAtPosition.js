@@ -8,8 +8,11 @@ const labelKeyRegExp = {
     "gm"
   ), // aaa.aaa.
 };
+
+console.log(labelKeyGen("*", ",", "^") + "|" + labelKeyGen("*", "'\"`"));
+
 function labelKeyGen(quant = "", end = "", start = "") {
-  return `${start}[\\w]+(\\.[\\w]${quant})${quant}(?=['${end}])`;
+  return `${start}[-\\w]+(\\.[-\\w]${quant})${quant}(?=['${end}])`;
 }
 
 function getLabelAtPosition(doc, position) {
