@@ -1,6 +1,5 @@
-// TODO: status updates on loading
-// TODO: better quick input lookup features
 // TODO: registerInlineCompletionItemProvider; inline translation?
+// TODO: Read variables, and get label value?
 
 const vscode = require("vscode");
 const {
@@ -18,6 +17,7 @@ const { LabelLinterProvider } = require("./src/providers/LabelLinterProvider");
  * @param {vscode.ExtensionContext} context
  */
 async function activate(context) {
+  const labelLinterProvider = new LabelLinterProvider(context);
   const labelManager = new LabelManager();
   const selector = [
     { scheme: "file", language: "typescript" },
@@ -26,24 +26,6 @@ async function activate(context) {
     { scheme: "file", language: "json" },
     { scheme: "file", language: "plaintext" },
   ];
-
-  await labelManager.init(); // initialize labels
-
-  new LabelLinterProvider(context);
-
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      selector,
-      new LabelCompletionItemProvider(),
-      '"',
-      "`",
-      "'"
-    )
-  );
-
-  context.subscriptions.push(
-    vscode.languages.registerHoverProvider(selector, new LabelHoverProvider())
-  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("peacockLabels.labelLookup", labelLookup)
@@ -61,6 +43,24 @@ async function activate(context) {
       labelManager.loadLabels();
     })
   );
+
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      selector,
+      new LabelCompletionItemProvider(),
+      '"',
+      "`",
+      "'"
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(selector, new LabelHoverProvider())
+  );
+
+  labelManager.init().then(() => {
+    labelLinterProvider.lintDocument(vscode.window.activeTextEditor.document);
+  }); // initialize labels
 
   // vscode.languages.registerInlayHintsProvider(selector, {
   //   provideInlayHints(doc, range, cancelToken) {

@@ -26,15 +26,19 @@
     "commands": [
       {
         "command": "peacockLabels.labelLookup",
-        "title": "Peacock Label Lookup"
+        "title": "Peacock Labels: Lookup"
       },
       {
         "command": "peacockLabels.reverseLabelLookup",
-        "title": "Peacock Reverse Label Lookup"
+        "title": "Peacock Labels: Reverse Lookup"
       },
       {
         "command": "peacockLabels.refreshLabels",
-        "title": "Peacock Refresh Labels"
+        "title": "Peacock Labels: Refresh"
+      },
+      {
+        "command": "peacockLabels.lintAllFiles",
+        "title": "Peacock Labels: Lint All"
       }
     ],
     "configuration": {

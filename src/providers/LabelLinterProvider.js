@@ -20,9 +20,16 @@ class LabelLinterProvider {
       this.lintDocument(e.document);
     });
 
-    this.lintDocument(vscode.window.activeTextEditor.document); // on start
+    // this.lintDocument(vscode.window.activeTextEditor.document); // on start
 
     context.subscriptions.push(this.collection);
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand("peacockLabels.lintAllFiles", () => {
+        console.log("register command");
+        this.lintAllFiles();
+      })
+    );
   }
 
   createDiagnostic(range, labelKey, type) {
@@ -44,30 +51,27 @@ class LabelLinterProvider {
     return diagnostic;
   }
 
-  lintAllDocuments() {
-    // find all documents
-    // lint
-  }
-
   lintLine(doc, line) {
     const char = line.text.search(labelKeyRegExp.partialkey);
 
-    if (char > -1) {
-      const label = getLabelAtPosition(
-        doc,
-        new vscode.Position(line.lineNumber, char)
-      );
+    if (char === -1) {
+      return false;
+    }
 
-      if (label) {
-        const type = this.linterType(label.key);
+    const label = getLabelAtPosition(
+      doc,
+      new vscode.Position(line.lineNumber, char + 1)
+    );
 
-        if (type > -1) {
-          return this.createDiagnostic(
-            label.range,
-            label.key,
-            this.linterType(label.key)
-          );
-        }
+    if (label) {
+      const type = this.linterType(label.key);
+
+      if (type > -1) {
+        return this.createDiagnostic(
+          label.range,
+          label.key,
+          this.linterType(label.key)
+        );
       }
     }
   }
@@ -75,7 +79,7 @@ class LabelLinterProvider {
   lintDocument(doc) {
     let documentDiagnostics = [];
 
-    if (doc) {
+    if (doc && doc.lineAt && doc.uri && doc.getWordRangeAtPosition) {
       let line = doc.lineAt(0);
 
       while (!line._isLastLine) {
@@ -104,6 +108,37 @@ class LabelLinterProvider {
     }
 
     return -1;
+  }
+
+  async lintAllFiles() {
+    const waitForIt = [];
+    const files = await vscode.workspace.findFiles(
+      "**/*.{ts,js,json,csv}",
+      // "peacock-lightning/**/*.{ts,js,json,csv}", // for testing?
+      "**/{node_modules,dist,build,adobe-legacy,packages,.vscode}/**"
+    );
+
+    for (let i = 0, l = files.length; i < l; i++) {
+      const uri = vscode.Uri.file(files[i].path);
+      const fileSize = (await vscode.workspace.fs.stat(uri)).size; // bytes
+      const fiftyMb = 100000 * 50; // 50mb
+
+      if (fileSize < fiftyMb) {
+        const loadingDoc = vscode.workspace.openTextDocument(uri);
+
+        waitForIt.push(loadingDoc);
+
+        loadingDoc.then((doc) => {
+          this.lintDocument(doc);
+          vscode.window.setStatusBarMessage(
+            `peacock-labels (linting ${i} of ${l} files)`
+          );
+        });
+      }
+    }
+    Promise.all(waitForIt).then(() => {
+      vscode.window.setStatusBarMessage(`peacock-labels (linting complete!)`);
+    });
   }
 }
 
