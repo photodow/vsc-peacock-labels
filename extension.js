@@ -45,21 +45,21 @@ async function activate(context) {
   );
 
   context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      selector,
-      new LabelCompletionItemProvider(),
-      '"',
-      "`",
-      "'"
-    )
-  );
-
-  context.subscriptions.push(
     vscode.languages.registerHoverProvider(selector, new LabelHoverProvider())
   );
 
   labelManager.init().then(() => {
     labelLinterProvider.lintDocument(vscode.window.activeTextEditor.document);
+
+    context.subscriptions.push(
+      vscode.languages.registerCompletionItemProvider(
+        selector,
+        new LabelCompletionItemProvider(),
+        '"',
+        "`",
+        "'"
+      )
+    );
   }); // initialize labels
 
   // vscode.languages.registerInlayHintsProvider(selector, {
